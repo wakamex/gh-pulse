@@ -47,6 +47,15 @@ jobs:
           HOME: ${{ runner.temp }}/home
           UV_CACHE_DIR: ${{ runner.temp }}/uv-cache
         run: |
+          expected="${GITHUB_REF_NAME#v}"
           mkdir -p "$HOME"
           uv tool install --force ghp
-          "$HOME/.local/bin/ghp" --help
+          test "$("$HOME/.local/bin/ghp" --version)" = "ghp $expected"
+      - name: verify uvx
+        env:
+          HOME: ${{ runner.temp }}/home-uvx
+          UV_CACHE_DIR: ${{ runner.temp }}/uvx-cache
+        run: |
+          expected="${GITHUB_REF_NAME#v}"
+          mkdir -p "$HOME"
+          test "$(uvx ghp --version)" = "ghp $expected"
