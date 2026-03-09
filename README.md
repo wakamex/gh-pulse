@@ -10,6 +10,13 @@ uv tool install ghp
 uvx ghp
 ```
 
+## Dev
+
+```bash
+uv sync --group dev
+uv run ghp --version
+```
+
 ## Usage
 
 ```bash
@@ -43,6 +50,6 @@ Looks for tokens in this order:
 ## Test
 
 ```bash
-PYTHONPATH=src python -m unittest discover -s tests
+uv run python -m unittest discover -s tests
 scripts/test-install.sh
 ```

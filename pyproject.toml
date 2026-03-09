@@ -12,3 +12,8 @@ license = "MIT"
 
 [project.scripts]
 ghp = "ghp.cli:main"
+
+[dependency-groups]
+dev = [
+  "build",
+]
