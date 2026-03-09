@@ -42,6 +42,23 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: astral-sh/setup-uv@v5
+      - name: wait for pypi
+        env:
+          HOME: ${{ runner.temp }}/home-wait
+          UV_CACHE_DIR: ${{ runner.temp }}/uv-cache-wait
+        run: |
+          expected="${GITHUB_REF_NAME#v}"
+          mkdir -p "$HOME"
+          got=""
+          for _ in $(seq 1 15); do
+            got="$(uvx ghp --version 2>/dev/null || true)"
+            if [ "$got" = "ghp $expected" ]; then
+              exit 0
+            fi
+            sleep 5
+          done
+          echo "expected ghp $expected, got: ${got:-<no output>}" >&2
+          exit 1
       - name: verify pypi install
         env:
           HOME: ${{ runner.temp }}/home
