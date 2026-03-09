@@ -1,33 +1,31 @@
-# gh-pulse
+# ghp
 
 Stateless GitHub activity summary. Compact, LLM-friendly output.
 
 ## Install
 
 ```bash
-uv pip install -e /code/gh-pulse --system
+uv tool install ghp
 # or
-uvx --from /code/gh-pulse gh-pulse
+uvx ghp
 ```
 
 ## Usage
 
 ```bash
-gh-pulse                              # open issues + PRs snapshot
-gh-pulse --since 1h                   # deltas since 1 hour ago
-gh-pulse --since 2026-03-07T14:00:00Z # deltas since timestamp
-gh-pulse --json                       # machine-readable output
-gh-pulse --me @clod                   # highlight mentions
-gh-pulse --repo owner/name            # explicit repo
-# default delta cursor comes from .gh-pulse-last-update-timestamp if present
-ghp --since 1h                        # short alias
-ghp 1h                                # positional --since shorthand
+ghp                                   # open issues + PRs snapshot
+ghp 1h                                # deltas since 1 hour ago
+ghp 2026-03-07T14:00:00Z              # deltas since timestamp
+ghp --json                            # machine-readable output
+ghp --me @clod                        # highlight mentions
+ghp --repo owner/name                 # explicit repo
+# default delta cursor comes from .ghp-last-update-timestamp if present
 ```
 
 ## Behavior
 
-- Cursor defaults to `.gh-pulse-last-update-timestamp` in the current working directory when `--since` is omitted.
-- Successful runs autosave the current timestamp back to `.gh-pulse-last-update-timestamp`.
+- Cursor defaults to `.ghp-last-update-timestamp` in the current working directory when `--since` is omitted.
+- Successful runs autosave the current timestamp back to `.ghp-last-update-timestamp`.
 - `--since` accepts relative shorthands (`30m`, `2h`, `1d`, `1w`) and normalizes timestamps to canonical UTC.
 - Snapshot mode returns open issues and open PRs.
 - Delta mode returns issues, PRs, issue comments, PR review comments, and recent commits since the cutoff.

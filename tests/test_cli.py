@@ -7,7 +7,7 @@ import unittest
 from contextlib import redirect_stdout
 from unittest import mock
 
-from gh_pulse import cli
+from ghp import cli
 
 
 class ResolveSinceTests(unittest.TestCase):
@@ -45,7 +45,7 @@ class FetchTests(unittest.TestCase):
             {"number": 32, "title": "issue-32"},
         ]
 
-        with mock.patch("gh_pulse.cli._api", side_effect=[first_page, second_page]):
+        with mock.patch("ghp.cli._api", side_effect=[first_page, second_page]):
             issues = cli._fetch_issues("owner/repo", "token", 3, None)
 
         self.assertEqual([30, 31, 32], [issue["number"] for issue in issues])
@@ -75,7 +75,7 @@ class FetchTests(unittest.TestCase):
         ]
 
         with mock.patch(
-            "gh_pulse.cli._fetch_comment_endpoint",
+            "ghp.cli._fetch_comment_endpoint",
             side_effect=[issue_comments, review_comments],
         ):
             comments = cli._fetch_comments(
@@ -102,7 +102,7 @@ class FetchTests(unittest.TestCase):
             }
         ]
 
-        with mock.patch("gh_pulse.cli._api", return_value=commits) as api_mock:
+        with mock.patch("ghp.cli._api", return_value=commits) as api_mock:
             result = cli._fetch_commits(
                 "owner/repo", "token", 3, "2026-03-07T15:00:00Z"
             )
@@ -130,9 +130,9 @@ class MainTests(unittest.TestCase):
         stdout = io.StringIO()
 
         with mock.patch.object(
-            sys, "argv", ["gh-pulse", "--json", "--repo", "owner/repo"]
+            sys, "argv", ["ghp", "--json", "--repo", "owner/repo"]
         ), mock.patch(
-            "gh_pulse.cli._fetch_issues", side_effect=cli.ApiError("boom")
+            "ghp.cli._fetch_issues", side_effect=cli.ApiError("boom")
         ), redirect_stdout(stdout):
             code = cli.main()
 
@@ -149,15 +149,15 @@ class MainTests(unittest.TestCase):
                 fh.write("2026-03-07T15:00:00Z\n")
 
             with mock.patch.object(
-                sys, "argv", ["gh-pulse", "--repo", "owner/repo"]
+                sys, "argv", ["ghp", "--repo", "owner/repo"]
             ), mock.patch("os.getcwd", return_value=tmpdir), mock.patch(
-                "gh_pulse.cli._fetch_issues", return_value=[]
+                "ghp.cli._fetch_issues", return_value=[]
             ), mock.patch(
-                "gh_pulse.cli._fetch_prs", return_value=[]
+                "ghp.cli._fetch_prs", return_value=[]
             ), mock.patch(
-                "gh_pulse.cli._fetch_comments", return_value=[]
+                "ghp.cli._fetch_comments", return_value=[]
             ), mock.patch(
-                "gh_pulse.cli._fetch_commits", return_value=[]
+                "ghp.cli._fetch_commits", return_value=[]
             ), redirect_stdout(stdout):
                 code = cli.main()
 
@@ -168,17 +168,17 @@ class MainTests(unittest.TestCase):
         stdout = io.StringIO()
         with tempfile.TemporaryDirectory() as tmpdir:
             with mock.patch.object(
-                sys, "argv", ["gh-pulse", "--repo", "owner/repo"]
+                sys, "argv", ["ghp", "--repo", "owner/repo"]
             ), mock.patch("os.getcwd", return_value=tmpdir), mock.patch(
-                "gh_pulse.cli._fetch_issues", return_value=[]
+                "ghp.cli._fetch_issues", return_value=[]
             ), mock.patch(
-                "gh_pulse.cli._fetch_prs", return_value=[]
+                "ghp.cli._fetch_prs", return_value=[]
             ), mock.patch(
-                "gh_pulse.cli._fetch_comments", return_value=[]
+                "ghp.cli._fetch_comments", return_value=[]
             ), mock.patch(
-                "gh_pulse.cli._fetch_commits", return_value=[]
+                "ghp.cli._fetch_commits", return_value=[]
             ), mock.patch(
-                "gh_pulse.cli._utc_now",
+                "ghp.cli._utc_now",
                 return_value=cli._parse_iso8601("2026-03-09T12:34:56Z"),
             ), redirect_stdout(stdout):
                 code = cli.main()
@@ -205,15 +205,15 @@ class MainTests(unittest.TestCase):
 
         with tempfile.TemporaryDirectory() as tmpdir:
             with mock.patch.object(
-                sys, "argv", ["gh-pulse", "--json", "--repo", "owner/repo", "--since", "1h"]
+                sys, "argv", ["ghp", "--json", "--repo", "owner/repo", "--since", "1h"]
             ), mock.patch("os.getcwd", return_value=tmpdir), mock.patch(
-                "gh_pulse.cli._fetch_issues", return_value=[]
+                "ghp.cli._fetch_issues", return_value=[]
             ), mock.patch(
-                "gh_pulse.cli._fetch_prs", return_value=[]
+                "ghp.cli._fetch_prs", return_value=[]
             ), mock.patch(
-                "gh_pulse.cli._fetch_comments", return_value=[]
+                "ghp.cli._fetch_comments", return_value=[]
             ), mock.patch(
-                "gh_pulse.cli._fetch_commits", return_value=commits
+                "ghp.cli._fetch_commits", return_value=commits
             ), redirect_stdout(stdout):
                 code = cli.main()
 
@@ -266,13 +266,13 @@ class MainTests(unittest.TestCase):
         with mock.patch.object(
             sys,
             "argv",
-            ["gh-pulse", "--repo", "owner/repo", "--since", "1h", "--me", "@clod"],
-        ), mock.patch("gh_pulse.cli._utc_now", return_value=cli._parse_iso8601("2026-03-07T18:00:00Z")), mock.patch(
-            "gh_pulse.cli._fetch_issues", return_value=[issue]
-        ), mock.patch("gh_pulse.cli._fetch_prs", return_value=[pr]), mock.patch(
-            "gh_pulse.cli._fetch_comments", return_value=[comment]
+            ["ghp", "--repo", "owner/repo", "--since", "1h", "--me", "@clod"],
+        ), mock.patch("ghp.cli._utc_now", return_value=cli._parse_iso8601("2026-03-07T18:00:00Z")), mock.patch(
+            "ghp.cli._fetch_issues", return_value=[issue]
+        ), mock.patch("ghp.cli._fetch_prs", return_value=[pr]), mock.patch(
+            "ghp.cli._fetch_comments", return_value=[comment]
         ), mock.patch(
-            "gh_pulse.cli._fetch_commits", return_value=commits
+            "ghp.cli._fetch_commits", return_value=commits
         ), redirect_stdout(stdout):
             code = cli.main()
 
@@ -303,16 +303,16 @@ class MainTests(unittest.TestCase):
         with mock.patch.object(
             sys, "argv", ["ghp", "1h", "--repo", "owner/repo"]
         ), mock.patch(
-            "gh_pulse.cli._utc_now",
+            "ghp.cli._utc_now",
             return_value=cli._parse_iso8601("2026-03-07T18:00:00Z"),
         ), mock.patch(
-            "gh_pulse.cli._fetch_issues", return_value=[]
+            "ghp.cli._fetch_issues", return_value=[]
         ), mock.patch(
-            "gh_pulse.cli._fetch_prs", return_value=[]
+            "ghp.cli._fetch_prs", return_value=[]
         ), mock.patch(
-            "gh_pulse.cli._fetch_comments", return_value=[]
+            "ghp.cli._fetch_comments", return_value=[]
         ), mock.patch(
-            "gh_pulse.cli._fetch_commits", return_value=[]
+            "ghp.cli._fetch_commits", return_value=[]
         ), redirect_stdout(stdout):
             code = cli.main()
 

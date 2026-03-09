@@ -3,12 +3,12 @@
 Compact, LLM-friendly output. Caller owns the cursor via --since.
 
 Usage:
-    gh-pulse                          # snapshot: open issues + PRs
-    gh-pulse --since 1h               # deltas since 1 hour ago
-    gh-pulse --since 2026-03-07T14:00:00Z
-    gh-pulse --json                   # machine-readable output
-    gh-pulse --me @clod               # highlight mentions
-    gh-pulse --repo owner/name        # explicit repo (else auto-detect)
+    ghp                               # snapshot: open issues + PRs
+    ghp 1h                            # deltas since 1 hour ago
+    ghp 2026-03-07T14:00:00Z
+    ghp --json                        # machine-readable output
+    ghp --me @clod                    # highlight mentions
+    ghp --repo owner/name             # explicit repo (else auto-detect)
 """
 
 import argparse
@@ -24,7 +24,7 @@ from datetime import datetime, timedelta, timezone
 
 ISO_8601_UTC = "%Y-%m-%dT%H:%M:%SZ"
 GITHUB_HANDLE_CHARS = "A-Za-z0-9-"
-LAST_UPDATE_FILENAME = ".gh-pulse-last-update-timestamp"
+LAST_UPDATE_FILENAME = ".ghp-last-update-timestamp"
 
 
 class ApiError(RuntimeError):
@@ -436,7 +436,7 @@ def _fmt_commit(commit):
 
 def main():
     parser = argparse.ArgumentParser(
-        prog="gh-pulse",
+        prog="ghp",
         description="Stateless GitHub activity summary — compact, LLM-friendly output",
     )
     parser.add_argument(
